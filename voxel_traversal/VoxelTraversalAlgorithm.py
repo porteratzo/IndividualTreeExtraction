@@ -6,6 +6,7 @@ Created on Mon July 11 18:50:39 2020
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from numba import jit
 
 def show_voxel(voxels):
     fig = plt.figure()
@@ -14,6 +15,8 @@ def show_voxel(voxels):
     plt.show()
 
 ############################################################
+inf_val = 1e10
+@jit(nopython=True)
 def voxel_traversal(start_point, directions, min_xyz, num_voxel_xyz, voxel_size):
     '''
     voxel traversal for tree center detection
@@ -30,13 +33,13 @@ def voxel_traversal(start_point, directions, min_xyz, num_voxel_xyz, voxel_size)
     next_voxel_boundary_y = (current_voxel_y + stepY) * voxel_size + min_xyz[1]
     next_voxel_boundary_z = (current_voxel_z + stepZ) * voxel_size + min_xyz[2]
 
-    tMaxX = (next_voxel_boundary_x - start_point[0]) / directions[0] if directions[0] != 0 else float('inf')
-    tMaxY = (next_voxel_boundary_y - start_point[1]) / directions[1] if directions[1] != 0 else float('inf')
-    tMaxZ = (next_voxel_boundary_z - start_point[2]) / directions[2] if directions[2] != 0 else float('inf')
+    tMaxX = (next_voxel_boundary_x - start_point[0]) / directions[0] if directions[0] != 0 else inf_val
+    tMaxY = (next_voxel_boundary_y - start_point[1]) / directions[1] if directions[1] != 0 else inf_val
+    tMaxZ = (next_voxel_boundary_z - start_point[2]) / directions[2] if directions[2] != 0 else inf_val
 
-    tDeltaX = voxel_size / directions[0] * stepX if directions[0] != 0 else float('inf')
-    tDeltaY = voxel_size / directions[1] * stepY if directions[1] != 0 else float('inf')
-    tDeltaZ = voxel_size / directions[2] * stepZ if directions[2] != 0 else float('inf')
+    tDeltaX = voxel_size / directions[0] * stepX if directions[0] != 0 else inf_val
+    tDeltaY = voxel_size / directions[1] * stepY if directions[1] != 0 else inf_val
+    tDeltaZ = voxel_size / directions[2] * stepZ if directions[2] != 0 else inf_val
 
     visited_voxels = []
     visited_voxels.append([current_voxel_x, current_voxel_y, current_voxel_z])
